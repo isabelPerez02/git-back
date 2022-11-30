@@ -6,3 +6,6 @@ Members:
  - Saray Melina Báez Mesa
  - Andrés Felipe Gualteros Tovar
  - Sebastian Rodriguez Parra
+ 
+ 
+ -> Descargar zip y abrirlo desde la carpeta movie.app
