@@ -3,6 +3,7 @@ package com.dino.movies.app.entities;
 import lombok.*;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.*;
 
@@ -19,4 +20,11 @@ public class Movie implements Serializable{
 
     private String id;
     private String name;
+    private String synopsis;
+    private String director;
+    private Date releaseDate;
+    private double qualification;
+    private String link;
+    private Category category;
+    
 }
