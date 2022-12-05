@@ -67,9 +67,6 @@ public class ScoreService {
                 if(request.getMovie().getSynopsis()==null){
                     request.getMovie().setSynopsis(repositoryMovie.findById(request.getMovie().getId()).get().getSynopsis());
                 }
-                if(request.getMovie().getDirector()==null){
-                    request.getMovie().setDirector(repositoryMovie.findById(request.getMovie().getId()).get().getDirector());
-                }
                 if(request.getMovie().getReleaseDate()==null){
                     request.getMovie().setReleaseDate(repositoryMovie.findById(request.getMovie().getId()).get().getReleaseDate());
                 }
