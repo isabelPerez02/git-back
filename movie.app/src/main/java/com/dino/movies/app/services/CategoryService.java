@@ -45,6 +45,15 @@ public class CategoryService {
         Optional<Category> currentCategory = repository.findById(category.getId());
         if (!currentCategory.isEmpty()) {            
             CategoryToUpdate = category;
+            if(category.getName()==null){
+                category.setName(currentCategory.get().getName());
+            }
+            if(category.getDescription()==null){
+                category.setDescription(currentCategory.get().getDescription());
+            }
+            if(category.getAgeMinium()==null){
+                category.setAgeMinium(currentCategory.get().getAgeMinium());
+            }
             CategoryToUpdate=repository.save(CategoryToUpdate);
         }
         return CategoryToUpdate;

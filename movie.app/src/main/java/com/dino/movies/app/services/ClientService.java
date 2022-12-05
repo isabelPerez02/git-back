@@ -42,6 +42,24 @@ public class ClientService {
         Optional<Client> currentClient = repository.findById(client.getId());
         if (!currentClient.isEmpty()) {            
             clientToUpdate = client;
+            if(client.getName()==null){
+                client.setName(currentClient.get().getName());
+            }
+            if(client.getEmail()==null){
+                client.setEmail(currentClient.get().getEmail());
+            }
+            if(client.getPassword()==null){
+                client.setPassword(currentClient.get().getPassword());
+            }
+            if(client.getLastName()==null){
+                client.setLastName(currentClient.get().getLastName());
+            }
+            if(client.getBirthDate()==null){
+                client.setBirthDate(currentClient.get().getBirthDate());
+            }
+            if(client.getPhone()==null){
+                client.setPhone(currentClient.get().getPhone());
+            }
             clientToUpdate=repository.save(clientToUpdate);
         }
         return clientToUpdate;

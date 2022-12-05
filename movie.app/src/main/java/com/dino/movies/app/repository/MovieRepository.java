@@ -1,5 +1,6 @@
 package com.dino.movies.app.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,10 @@ public class MovieRepository {
         return repository.findAll();
     }
     
+    public List<Movie> getByName(String name){
+        return repository.getMoviesByName(name);
+    }
+
     public Optional<Movie> findById(String id){
         Optional<Movie> response= repository.findById(id);
         return response;

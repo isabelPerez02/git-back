@@ -6,18 +6,17 @@ import javax.persistence.*;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document("score")
+@Document("staff")
 @Getter @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Score {
+public class Staff {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 
     private String id;
-    private Integer score;
-    private String state;
-    private Client client;
-    private Movie movie;
+    private String name;
+    private String lastName;
+    private String rol;
 }
