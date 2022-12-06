@@ -17,6 +17,9 @@ public class ClientService {
     private final String ERROR_USER_EXISTS = "El usuario ya existe";
     private final String SUCCESS_USER_CREATED = "Usuario creado";
 
+    private final String CLIENT_Autentication="Sus credenciales son incorrectas";
+    private final String CLIENT_SUCCESS="El cliente se logueo correctamente";
+
     @Autowired
     ClientRepository repository;
 
@@ -32,6 +35,27 @@ public class ClientService {
         reportClientDto.email = client.get().getEmail();
         reportClientDto.id = client.get().getId();
         return reportClientDto;
+    }
+
+    public ResponseDto postAutentication(Client request) {
+
+        ResponseDto response = new ResponseDto();
+        List<Client> clientsE = repository.getByEmail(request.getEmail());
+        List<Client> clientsP = repository.getByPassword(request.getPassword());
+
+        if(clientsE.size()>0 && clientsP.size()>0 && clientsE.get(0).getPassword().equals(request.getPassword() )){
+            response.status=true;
+            response.message=CLIENT_SUCCESS;
+            response.id= request.getId();
+            
+        }else{
+            response.status=false;
+            response.message=CLIENT_Autentication;
+        }
+
+
+        return response;
+
     }
 
     public ResponseDto create(Client request) {
