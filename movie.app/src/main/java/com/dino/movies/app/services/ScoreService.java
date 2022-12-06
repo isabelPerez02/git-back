@@ -1,11 +1,14 @@
 package com.dino.movies.app.services;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.dino.movies.app.dto.ResponseDto;
+import com.dino.movies.app.entities.Client;
+import com.dino.movies.app.entities.Movie;
 import com.dino.movies.app.entities.Score;
 import com.dino.movies.app.repository.ClientRepository;
 import com.dino.movies.app.repository.MovieRepository;
@@ -14,8 +17,12 @@ import com.dino.movies.app.repository.ScoreRepository;
 
 
 
+
 @Service
 public class ScoreService {
+
+    private final String MOVIE_NO_EXIST ="No existe la pelicula a calificar";
+    private final String CLIENT_NO_EXIST ="No existe el cliente para poder calificar la pelicula";
     
     @Autowired
     ScoreRepository repository;
@@ -34,57 +41,76 @@ public class ScoreService {
 
     public ResponseDto create(Score request) {
         ResponseDto response = new ResponseDto();
-        if(request.getScore().intValue()<0 || request.getScore().intValue()>10){
-            response.status=false;
-            response.message="La calificación enviada no está dentro de los valores esperados";
-        }else{
-        
-            if(repositoryClient.findById(request.getClient().getId()) !=null){
-                if(request.getClient().getEmail()==null){
-                    request.getClient().setEmail(repositoryClient.findById(request.getClient().getId()).get().getEmail());
+
+        List<Client> clients = repositoryClient.getByEmail(request.getClient().getEmail());
+        List<Movie> movies = repositoryMovie.getByName(request.getMovie().getName());
+
+        if(movies.size()>0 && clients.size()>0){
+
+            if(request.getScore().intValue()<0 || request.getScore().intValue()>10){
+                response.status=false;
+                response.message="La calificación enviada no está dentro de los valores esperados";
+
+                return response;
+            }else{
+            
+                if(repositoryClient.findById(request.getClient().getId()) !=null){
+                    if(request.getClient().getEmail()==null){
+                        request.getClient().setEmail(repositoryClient.findById(request.getClient().getId()).get().getEmail());
+                    }
+                    if(request.getClient().getPassword()==null){
+                        request.getClient().setPassword(repositoryClient.findById(request.getClient().getId()).get().getPassword());
+                    }
+                    if(request.getClient().getName()==null){
+                        request.getClient().setName(repositoryClient.findById(request.getClient().getId()).get().getName());
+                    }
+                    if(request.getClient().getLastName()==null){
+                        request.getClient().setLastName(repositoryClient.findById(request.getClient().getId()).get().getLastName());
+                    }
+                    if(request.getClient().getBirthDate()==null){
+                        request.getClient().setBirthDate(repositoryClient.findById(request.getClient().getId()).get().getBirthDate());
+                    }
+                    if(request.getClient().getPhone()==null){
+                        request.getClient().setPhone(repositoryClient.findById(request.getClient().getId()).get().getPhone());
+                    }
                 }
-                if(request.getClient().getPassword()==null){
-                    request.getClient().setPassword(repositoryClient.findById(request.getClient().getId()).get().getPassword());
+    
+                if(repositoryMovie.findById(request.getMovie().getId()) !=null){
+                    if(request.getMovie().getName()==null){
+                        request.getMovie().setName(repositoryMovie.findById(request.getMovie().getId()).get().getName());
+                    }
+                    if(request.getMovie().getSynopsis()==null){
+                        request.getMovie().setSynopsis(repositoryMovie.findById(request.getMovie().getId()).get().getSynopsis());
+                    }
+                    if(request.getMovie().getReleaseDate()==null){
+                        request.getMovie().setReleaseDate(repositoryMovie.findById(request.getMovie().getId()).get().getReleaseDate());
+                    }
+                    if(request.getMovie().getLink()==null){
+                        request.getMovie().setLink(repositoryMovie.findById(request.getMovie().getId()).get().getLink());
+                    }
+                    if(request.getMovie().getCategory()==null){
+                        request.getMovie().setCategory(repositoryMovie.findById(request.getMovie().getId()).get().getCategory());
+                    }
                 }
-                if(request.getClient().getName()==null){
-                    request.getClient().setName(repositoryClient.findById(request.getClient().getId()).get().getName());
-                }
-                if(request.getClient().getLastName()==null){
-                    request.getClient().setLastName(repositoryClient.findById(request.getClient().getId()).get().getLastName());
-                }
-                if(request.getClient().getBirthDate()==null){
-                    request.getClient().setBirthDate(repositoryClient.findById(request.getClient().getId()).get().getBirthDate());
-                }
-                if(request.getClient().getPhone()==null){
-                    request.getClient().setPhone(repositoryClient.findById(request.getClient().getId()).get().getPhone());
-                }
+    
             }
 
-            if(repositoryMovie.findById(request.getMovie().getId()) !=null){
-                if(request.getMovie().getName()==null){
-                    request.getMovie().setName(repositoryMovie.findById(request.getMovie().getId()).get().getName());
-                }
-                if(request.getMovie().getSynopsis()==null){
-                    request.getMovie().setSynopsis(repositoryMovie.findById(request.getMovie().getId()).get().getSynopsis());
-                }
-                if(request.getMovie().getReleaseDate()==null){
-                    request.getMovie().setReleaseDate(repositoryMovie.findById(request.getMovie().getId()).get().getReleaseDate());
-                }
-                if(request.getMovie().getLink()==null){
-                    request.getMovie().setLink(repositoryMovie.findById(request.getMovie().getId()).get().getLink());
-                }
-                if(request.getMovie().getCategory()==null){
-                    request.getMovie().setCategory(repositoryMovie.findById(request.getMovie().getId()).get().getCategory());
-                }
-            }
+            repository.save(request);
+            response.status=true;
+            response.message="Calificación guardada correctamente";
+            response.id= request.getId();
 
-                repository.save(request);
-                response.status=true;
-                response.message="Calificación guardada correctamente";
-                response.id= request.getId();
+
            
-
+        }else if(!(movies.size()>0)){
+            response.status=false;
+            response.message=MOVIE_NO_EXIST;
+        }else{
+            response.status=false;
+            response.message=CLIENT_NO_EXIST;
         }
+       
+
         return response;
     }
 
