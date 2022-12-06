@@ -29,6 +29,18 @@ public class ClientController {
         return service.getReport();
     }
 
+    @PostMapping("/autentication")
+    public ResponseEntity<ResponseDto>  postAutentication(@RequestBody Client request)  {
+        ResponseDto responseDto = service.postAutentication(request);
+        ResponseEntity<ResponseDto> response = new ResponseEntity<>(responseDto,HttpStatus.CONFLICT);
+
+        if(responseDto.status.booleanValue()==true){
+            response = new ResponseEntity<>(responseDto,HttpStatus.CREATED);
+        }
+
+        return response;
+    }
+
     @PostMapping("")
     public ResponseEntity<ResponseDto> create(@RequestBody Client request) {
         ResponseDto responseDto = service.create(request);

@@ -32,6 +32,9 @@ public class ClientRepository {
         return repository.getClientsByEmail(email);
     }
 
+    public List<Client> getByPassword(String password){
+        return repository.getClientsByPassword(password);
+    }
     
     public void deleteById(String id){
         repository.deleteById(id);

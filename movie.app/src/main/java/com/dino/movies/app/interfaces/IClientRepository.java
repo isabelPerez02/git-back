@@ -15,4 +15,7 @@ public interface IClientRepository extends CrudRepository<Client, String>{
    @Query(value="{email :?0}")
    List<Client> getClientsByEmail(String email);
 
+   @Query(value="{password :?0}")
+    List<Client> getClientsByPassword(String password);
+
 }
