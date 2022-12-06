@@ -5,9 +5,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import com.dino.movies.app.dto.ReportClientDto;
+import com.dino.movies.app.dto.ResponseDto;
 import com.dino.movies.app.entities.Client;
 import com.dino.movies.app.services.ClientService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 @RestController
 @RequestMapping("/api/client")
@@ -28,9 +30,14 @@ public class ClientController {
     }
 
     @PostMapping("")
-    @ResponseStatus(HttpStatus.CREATED)
-    public Client create(@RequestBody Client request) {
-        return service.create(request);
+    public ResponseEntity<ResponseDto> create(@RequestBody Client request) {
+        ResponseDto responseDto = service.create(request);
+        ResponseEntity<ResponseDto> response = new ResponseEntity<>(responseDto,HttpStatus.CONFLICT);
+
+        if(responseDto.status.booleanValue()==true){
+            response = new ResponseEntity<>(responseDto,HttpStatus.CREATED);
+        }
+        return response;
     }
 
     @PutMapping("")
