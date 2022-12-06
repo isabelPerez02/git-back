@@ -1,5 +1,6 @@
 package com.dino.movies.app.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,11 @@ public class ClientRepository {
     public Boolean existsById(String id){
         return repository.existsById(id);
     }
+
+    public List<Client> getByEmail(String email){
+        return repository.getClientsByEmail(email);
+    }
+
     
     public void deleteById(String id){
         repository.deleteById(id);
