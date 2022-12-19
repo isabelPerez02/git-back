@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.dino.movies.app.dto.ResponseDto;
+import com.dino.movies.app.dto.ScoreDto;
 import com.dino.movies.app.entities.Client;
 import com.dino.movies.app.entities.Movie;
 import com.dino.movies.app.entities.Score;
@@ -33,13 +34,62 @@ public class ScoreService {
     @Autowired
     ClientRepository repositoryClient;
 
+    @Autowired
+    ClientService clientService;
+
 
     public Iterable<Score> get() {
         Iterable<Score> response = repository.getAll();
         return response;
     }
 
-    public ResponseDto create(Score request) {
+    public Score check(String movieId,String authorization) {
+
+        Score score = new Score();
+        Optional<Movie> movie = repositoryMovie.findById(movieId);
+        Optional<Client> client = clientService.getByCredential(authorization);
+        if(movie.isPresent() && client.isPresent()){
+            List<Score> scores = repository.findByMovieAndClient(movie.get().getId(),client.get().getId());
+            if(scores.size()>0){
+                score = scores.get(scores.size()-1);//retorna la ultima calificacion
+            }
+        }
+
+        return score;
+    }
+
+     public ResponseDto create(ScoreDto request, String authorization) {
+        ResponseDto response = new ResponseDto();
+        response.status = false;
+        if(request.score<0 || request.score>10){
+            //response.status=false;
+            response.message="La calificación enviada no está dentro de los valores esperados";
+        }else{
+            Score score = new Score();
+
+            Optional<Movie> movie = repositoryMovie.findById(request.movieId);
+            Optional<Client> client = clientService.getByCredential(authorization);
+            
+            if(movie.isPresent() && client.isPresent()){
+                //validacion de si ya existe la calificacion
+                 //puede ser que se actualice
+                score.setScore(request.score);
+                score.setState("activo");
+                score.setMovie(movie.get());
+                score.setClient(client.get());
+                repository.save(score);
+                response.status=true;
+                response.message="Calificación guardada correctamente";
+                response.id= score.getId();
+            }
+
+
+        }
+        return response;
+    }
+
+ /*  Mi validación, pero debo revisar lo de Score y depurar
+   public ResponseDto create(Score request) {
         ResponseDto response = new ResponseDto();
 
         List<Client> clients = repositoryClient.getByEmail(request.getClient().getEmail());
@@ -53,6 +103,7 @@ public class ScoreService {
 
                 return response;
             }else{
+               
             
                 if(repositoryClient.findById(request.getClient().getId()) !=null){
                     if(request.getClient().getEmail()==null){
@@ -88,17 +139,16 @@ public class ScoreService {
                     if(request.getMovie().getLink()==null){
                         request.getMovie().setLink(repositoryMovie.findById(request.getMovie().getId()).get().getLink());
                     }
-                    if(request.getMovie().getCategory()==null){
-                        request.getMovie().setCategory(repositoryMovie.findById(request.getMovie().getId()).get().getCategory());
-                    }
                 }
     
             }
 
+            Score score = new Score();
             repository.save(request);
             response.status=true;
             response.message="Calificación guardada correctamente";
-            response.id= request.getId();
+            response.id= score.getId();
+           response.id= request.getId();
 
 
            
@@ -112,29 +162,25 @@ public class ScoreService {
        
 
         return response;
-    }
+    } */
 
-    public Score update(Score score) {
-        Score scoreToUpdate = new Score();
+    public ResponseDto update(Score score,String scoreId) {
 
-        Optional<Score> currentScore = repository.findById(score.getId());
+        ResponseDto response = new ResponseDto();
+        Optional<Score> currentScore = repository.findById(scoreId);
         if (!currentScore.isEmpty()) {
-            scoreToUpdate = score;
-            if(score.getScore()==null){
-                score.setScore(currentScore.get().getScore());
-            }
-            if(score.getState()==null){
-                score.setState(currentScore.get().getState());
-            }
-            if(score.getClient()==null){
-                score.setClient(currentScore.get().getClient());
-            }
-            if(score.getMovie()==null){
-                score.setMovie(currentScore.get().getMovie());
-            }
-            scoreToUpdate=repository.save(scoreToUpdate);
+            Score scoreToUpdate = new Score();
+            scoreToUpdate = currentScore.get();
+            scoreToUpdate.setScore(score.getScore());
+            repository.save(scoreToUpdate);
+            response.status=true;
+            response.message="Se actualizó correctamente";
+            response.id=scoreId;
+        }else{
+            response.status=false;
+            response.message="No se logró la actualización";
         }
-        return scoreToUpdate;
+        return response;
     }
 
     public Boolean delete(String id) {

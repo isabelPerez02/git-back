@@ -25,7 +25,8 @@ public class Movie implements Serializable{
     private Date releaseDate;
     private double qualification;
     private String link;
-    private Category category;
+    private String imageLink;
+    private List<Category> categoryList;
     private List<Staff> staffList;
     
 }

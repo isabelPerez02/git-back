@@ -4,11 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import com.dino.movies.app.dto.ResponseDto;
+import com.dino.movies.app.dto.ScoreDto;
 import com.dino.movies.app.entities.Score;
 import com.dino.movies.app.services.ScoreService;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
 @RestController
 @RequestMapping("/api/score")
@@ -23,16 +23,21 @@ public class ScoreController {
         return service.get();
     }
 
-   /*  @PostMapping("")
-    @ResponseStatus(HttpStatus.CREATED)
-    public ResponseDto create(@RequestBody Score request) {
-        if(request.getScore().intValue()>4){
-            System.out.println("mayor a 4");
-        }
-        return service.create(request);
-    }*/
+    @GetMapping("/check/{movieId}")
+    public Score check(@PathVariable("movieId") String movieId,@RequestHeader(value="authorization") String authorization) {
+        return service.check(movieId,authorization);
+    }
 
-    @PostMapping("")
+     @PostMapping("")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseDto create(@RequestBody ScoreDto request, @RequestHeader(value="authorization") String authorization) {
+        return service.create(request, authorization);
+       
+    }
+
+   /*  Validacion de que el cliente existe
+   @PostMapping("")
+    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<ResponseDto>  create(@RequestBody Score request) {
         ResponseDto responseDto = service.create(request);
         ResponseEntity<ResponseDto> response = new ResponseEntity<>(responseDto,HttpStatus.CONFLICT);
@@ -42,13 +47,15 @@ public class ScoreController {
         }
 
         return response;
-    } 
+    } */
 
 
-    @PutMapping("")
+
+
+    @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public Score update(@RequestBody Score request) {
-        return service.update(request);
+    public ResponseDto update(@PathVariable("id") String id,@RequestBody Score request) {
+        return service.update(request,id);
     }
 
     @DeleteMapping("/{id}")

@@ -4,6 +4,7 @@ package com.dino.movies.app.interfaces;
 
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -17,5 +18,8 @@ public interface IClientRepository extends CrudRepository<Client, String>{
 
    @Query(value="{password :?0}")
     List<Client> getClientsByPassword(String password);
+
+    @Query(value="{email :?0}")
+    Optional<Client> findByEmail(String email);
 
 }

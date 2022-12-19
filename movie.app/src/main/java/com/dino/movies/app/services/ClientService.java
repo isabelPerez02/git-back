@@ -4,13 +4,16 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
 
 import com.dino.movies.app.dto.ResponseDto;
 import com.dino.movies.app.dto.ReportClientDto;
 import com.dino.movies.app.entities.Client;
 import com.dino.movies.app.repository.ClientRepository;
-
+import org.apache.tomcat.util.codec.binary.Base64;
 @Service
 public class ClientService {
 
@@ -23,9 +26,23 @@ public class ClientService {
     @Autowired
     ClientRepository repository;
 
+    PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
     public Iterable<Client> get() {
         Iterable<Client> response = repository.getAll();
         return response;
+    }//23
+
+    public Optional<Client> getByCredential(String credential) {
+        String pair = new String(Base64.decodeBase64(credential.substring(6)));
+        String email = pair.split(":")[0];
+        String pass = pair.split(":")[1];
+
+        Optional<Client> client = repository.findByEmail(email);
+        if(!matchPass(pass,client.get().getPassword())){
+            return null;
+        }
+        return client;
     }
 
     public ReportClientDto getReport() {
@@ -66,6 +83,7 @@ public class ClientService {
             response.message = ERROR_USER_EXISTS;
 
         } else {
+            request.setPassword(encrypt(request.getPassword()));
             repository.save(request);
             response.status=true;
             response.message=SUCCESS_USER_CREATED;
@@ -110,4 +128,14 @@ public class ClientService {
         Boolean deleted = true;
         return deleted;
     }
+
+    private String encrypt(String pass){
+        return this.passwordEncoder.encode(pass);
+    }
+
+    private Boolean matchPass(String pass,String dbPass){
+        return this.passwordEncoder.matches(pass,dbPass);
+    }
 }
+
+
