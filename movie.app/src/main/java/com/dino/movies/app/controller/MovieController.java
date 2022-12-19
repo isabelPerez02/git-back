@@ -1,5 +1,7 @@
 package com.dino.movies.app.controller;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +22,11 @@ public class MovieController {
     @GetMapping("")
     public Iterable<Movie> get() {
         return service.get();
+    }
+
+    @GetMapping("/{id}")
+    public Optional<Movie> getById(@PathVariable("id") String id) {
+        return service.getById(id);
     }
 
     @PostMapping("")

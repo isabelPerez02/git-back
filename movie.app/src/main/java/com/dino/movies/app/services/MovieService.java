@@ -36,6 +36,11 @@ public class MovieService {
         return response;
     }
 
+    public Optional<Movie> getById(String id) {
+        Optional<Movie> response = repository.findById(id);
+        return response;
+    }
+
     public ResponseDto create(Movie request) {
         ResponseDto response = new ResponseDto();
         List<Movie> movies = repository.getByName(request.getName());
@@ -74,9 +79,6 @@ public class MovieService {
             }
             if(movie.getLink()==null){
                 movie.setLink(currentMovie.get().getLink());
-            }
-            if(movie.getCategory()==null){
-                movie.setCategory(currentMovie.get().getCategory());
             }
             movieToUpdate=repository.save(movieToUpdate);
         }

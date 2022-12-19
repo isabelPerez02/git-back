@@ -35,6 +35,11 @@ public class ClientRepository {
     public List<Client> getByPassword(String password){
         return repository.getClientsByPassword(password);
     }
+
+    public Optional<Client> findByEmail(String email){
+        Optional<Client> response= repository.findByEmail(email);
+        return response;
+    }
     
     public void deleteById(String id){
         repository.deleteById(id);
